@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CustomInk Pricing Assistant — Prototype</title>
+<style>
+:root {
+  --brand-blue: #1F4E79;
+  --accent-blue: #2E75B6;
+  --light-blue: #D6E4F0;
+  --mid-blue: #BDD7EE;
+  --green: #E2EFDA; --green-dark: #375623;
+  --orange: #FCE4D6; --orange-dark: #843C0C;
+  --yellow: #FFF2CC; --yellow-dark: #7F6000;
+  --gray-50: #F8F9FA; --gray-100: #F1F3F4;
+  --gray-200: #E9ECEF; --gray-400: #CED4DA;
+  --gray-600: #6C757D; --gray-800: #343A40;
+  --white: #FFFFFF;
+  --success: #28A745; --warning: #E07B00; --danger: #DC3545;
+  --sf-blue: #0070D2; --sf-dark: #032D60; --sf-nav: #16325C;
+  --sf-light: #EAF4FF; --sf-border: #DDDBDA; --sf-hover: #F3F2F2;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--gray-50);color:var(--gray-800);font-size:14px;}
+
+/* ── HEADER ── */
+.header{background:var(--brand-blue);color:white;padding:14px 28px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.header-logo{font-size:20px;font-weight:800;letter-spacing:-.5px;}
+.header-logo span{color:#BDD7EE;}
+.header-title{font-size:15px;font-weight:400;opacity:.85;border-left:1px solid rgba(255,255,255,.3);padding-left:14px;}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.header-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+.settings-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:6px;padding:6px 12px;font-size:12px;color:white;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s;}
+.settings-btn:hover{background:rgba(255,255,255,.22);}
+
+/* ── WORKFLOW BANNER ── */
+.workflow-bar{background:var(--sf-dark);padding:0 28px;}
+.workflow-steps{display:flex;max-width:960px;margin:0 auto;}
+.wf-step{flex:1;display:flex;align-items:center;padding:12px 10px;gap:10px;color:rgba(255,255,255,.45);font-size:12px;font-weight:600;border-bottom:3px solid transparent;transition:all .2s;cursor:default;position:relative;}
+.wf-step.active{color:white;border-bottom-color:#4BC8F5;}
+.wf-step.done{color:#4BC8F5;border-bottom-color:rgba(75,200,245,.4);}
+.wf-step .num{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all .2s;}
+.wf-step.active .num{background:#4BC8F5;color:var(--sf-dark);}
+.wf-step.done .num{background:rgba(75,200,245,.25);color:#4BC8F5;}
+.wf-step-label{line-height:1.3;}
+.wf-step-sub{font-size:10px;font-weight:400;opacity:.7;display:block;}
+.wf-connector{width:20px;height:2px;background:rgba(255,255,255,.1);flex-shrink:0;align-self:center;margin-bottom:3px;}
+
+/* ── MAIN ── */
+.main{max-width:960px;margin:28px auto;padding:0 16px;}
+
+/* ── CARDS ── */
+.card{background:white;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:18px;overflow:hidden;}
+.card-header{padding:14px 22px;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:9px;}
+.card-header h2{font-size:15px;font-weight:700;color:var(--brand-blue);}
+.card-body{padding:22px;}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field.span2{grid-column:span 2;}
+label{font-size:11px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px;}
+label .req{color:var(--danger);margin-left:2px;}
+input,select,textarea{border:1px solid var(--gray-400);border-radius:6px;padding:8px 11px;font-size:14px;font-family:inherit;color:var(--gray-800);transition:border-color .15s,box-shadow .15s;background:white;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent-blue);box-shadow:0 0 0 3px rgba(46,117,182,.15);}
+input.error,select.error{border-color:var(--danger);}
+.field-hint{font-size:11px;color:var(--gray-600);}
+.section-div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--accent-blue);padding:6px 0 3px;border-bottom:1px solid var(--light-blue);margin-bottom:2px;grid-column:span 2;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .15s;font-family:inherit;}
+.btn-primary{background:var(--accent-blue);color:white;}
+.btn-primary:hover{background:var(--brand-blue);}
+.btn-sf{background:var(--sf-blue);color:white;}
+.btn-sf:hover{background:var(--sf-dark);}
+.btn-success{background:var(--success);color:white;}
+.btn-secondary{background:white;color:var(--accent-blue);border:1px solid var(--accent-blue);}
+.btn-secondary:hover{background:var(--light-blue);}
+.btn-ghost{background:transparent;color:var(--gray-600);border:1px solid var(--gray-400);}
+.btn-ghost:hover{background:var(--gray-100);}
+.btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;}
+.badge-auto{background:var(--green);color:var(--green-dark);}
+.badge-review{background:var(--orange);color:var(--orange-dark);}
+.badge-manager{background:var(--yellow);color:var(--yellow-dark);}
+.badge-a{background:var(--light-blue);color:var(--brand-blue);}
+.badge-b{background:#E8D5F0;color:#5B2C6F;}
+
+/* ── ANALYSIS PANELS ── */
+.routing-card{border:2px solid;border-radius:8px;padding:18px;margin-bottom:14px;}
+.routing-card.type-a{border-color:var(--accent-blue);background:#F0F6FB;}
+.routing-card.type-b{border-color:#8E44AD;background:#F9F0FF;}
+.routing-card.auto-ok{border-color:var(--success);background:#F0FFF4;}
+.routing-card.needs-escalation{border-color:var(--warning);background:#FFFBF0;}
+.routing-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;}
+.routing-title{font-size:17px;font-weight:800;margin-bottom:4px;}
+.routing-desc{font-size:12px;color:var(--gray-600);margin-bottom:10px;}
+.detail-row{display:flex;gap:8px;margin-bottom:5px;font-size:12px;}
+.detail-label{font-weight:700;color:var(--gray-600);min-width:130px;}
+.check-item{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid var(--gray-100);}
+.check-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;}
+.ci-pass{background:var(--green);color:var(--green-dark);}
+.ci-fail{background:var(--orange);color:var(--orange-dark);}
+.ci-warn{background:var(--yellow);color:var(--yellow-dark);}
+.check-text strong{display:block;font-size:12px;color:var(--gray-800);}
+.check-text span{font-size:11px;color:var(--gray-600);}
+
+/* ── SUMMARY STRIP ── */
+.summary-strip{background:var(--light-blue);border-radius:8px;padding:10px 14px;margin-bottom:16px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.strip-item .s-label{font-size:10px;font-weight:700;color:var(--brand-blue);text-transform:uppercase;letter-spacing:.4px;display:block;}
+.strip-item .s-val{color:var(--gray-800);font-size:13px;font-weight:600;}
+
+/* ── SALESFORCE MOCK ── */
+.sf-chrome{border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.12);}
+.sf-topbar{background:var(--sf-nav);display:flex;align-items:center;padding:0 16px;height:44px;gap:12px;}
+.sf-topbar-logo{color:white;font-size:13px;font-weight:800;letter-spacing:-.3px;}
+.sf-topbar-logo span{color:#4BC8F5;}
+.sf-topbar-search{flex:1;max-width:300px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:5px 10px;color:white;font-size:12px;display:flex;align-items:center;gap:6px;}
+.sf-topbar-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.sf-avatar{width:28px;height:28px;border-radius:50%;background:#4BC8F5;color:var(--sf-dark);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+.sf-nav-bar{background:var(--sf-dark);display:flex;padding:0 16px;border-top:1px solid rgba(255,255,255,.08);}
+.sf-nav-item{color:rgba(255,255,255,.65);font-size:12px;font-weight:600;padding:8px 12px;cursor:default;border-bottom:2px solid transparent;}
+.sf-nav-item.active{color:white;border-bottom-color:#4BC8F5;}
+.sf-page-header{background:white;border-bottom:1px solid var(--sf-border);padding:12px 20px;}
+.sf-breadcrumb{font-size:11px;color:var(--sf-blue);margin-bottom:4px;}
+.sf-page-title{font-size:20px;font-weight:700;color:var(--gray-800);display:flex;align-items:center;gap:10px;}
+.sf-page-actions{display:flex;gap:8px;margin-top:10px;}
+.sf-btn{padding:6px 14px;border-radius:4px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;}
+.sf-btn-primary{background:var(--sf-blue);color:white;}
+.sf-btn-primary:hover{background:#005CB9;}
+.sf-btn-outline{background:white;color:var(--sf-blue);border:1px solid var(--sf-blue);}
+.sf-btn-outline:hover{background:var(--sf-light);}
+.sf-content{background:var(--gray-100);padding:16px;}
+.sf-two-col{display:grid;grid-template-columns:2fr 1fr;gap:14px;}
+.sf-section{background:white;border:1px solid var(--sf-border);border-radius:6px;margin-bottom:14px;overflow:hidden;}
+.sf-section-header{background:var(--sf-hover);padding:8px 16px;font-size:12px;font-weight:700;color:var(--gray-800);border-bottom:1px solid var(--sf-border);display:flex;align-items:center;justify-content:space-between;}
+.sf-section-body{padding:14px 16px;}
+.sf-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;}
+.sf-field{display:flex;flex-direction:column;gap:2px;}
+.sf-field.full{grid-column:span 2;}
+.sf-field-label{font-size:11px;color:var(--gray-600);font-weight:600;}
+.sf-field-value{font-size:13px;color:var(--gray-800);padding:4px 0;border-bottom:1px solid var(--sf-border);}
+.sf-field-value.editable{background:white;border:1px solid var(--sf-border);border-radius:3px;padding:5px 8px;cursor:text;}
+.sf-field-value.editable:focus{outline:none;border-color:var(--sf-blue);box-shadow:0 0 0 2px rgba(0,112,210,.2);}
+.sf-field-value.highlight{color:var(--sf-blue);font-weight:600;}
+.sf-field-value.auto-badge{display:inline-flex;align-items:center;gap:5px;}
+.sf-status-pill{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;}
+.sf-status-new{background:#D4E1F7;color:#032D60;}
+.sf-status-prog{background:#D4EDDA;color:#155724;}
+.sf-status-wait{background:#FFF3CD;color:#856404;}
+.sf-task{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--sf-border);font-size:12px;align-items:flex-start;}
+.sf-task:last-child{border-bottom:none;}
+.sf-task-check{width:16px;height:16px;border:1px solid var(--sf-border);border-radius:3px;flex-shrink:0;margin-top:1px;}
+.sf-task-content strong{display:block;color:var(--gray-800);}
+.sf-task-content span{color:var(--gray-600);font-size:11px;}
+.sf-chatter-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--sf-border);font-size:12px;}
+.sf-chatter-item:last-child{border-bottom:none;}
+.sf-chatter-avatar{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+.sf-chatter-body strong{display:block;color:var(--gray-800);}
+.sf-chatter-body span{color:var(--gray-600);}
+.sf-chatter-body p{margin-top:5px;line-height:1.5;color:var(--gray-800);}
+.sf-activity-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.sf-related-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--sf-border);font-size:12px;}
+.sf-related-item:last-child{border-bottom:none;}
+.sf-related-item a{color:var(--sf-blue);font-weight:600;}
+
+/* ── MESSAGES ── */
+.msg-section{margin-bottom:18px;}
+.msg-section h3{font-size:12px;font-weight:700;color:var(--brand-blue);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.platform-tag{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;color:white;}
+.tag-slack{background:#4A154B;}
+.tag-email{background:#EA4335;}
+.tag-sf{background:#0070D2;}
+.msg-box{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:7px;padding:12px 14px;font-family:'Courier New',monospace;font-size:12px;line-height:1.7;white-space:pre-wrap;color:var(--gray-800);position:relative;}
+.copy-btn{position:absolute;top:8px;right:8px;background:white;border:1px solid var(--gray-400);border-radius:4px;padding:3px 9px;font-size:10px;cursor:pointer;font-family:inherit;color:var(--gray-600);transition:all .15s;}
+.copy-btn:hover{background:var(--accent-blue);color:white;border-color:var(--accent-blue);}
+.copy-btn.copied{background:var(--success);color:white;border-color:var(--success);}
+
+/* ── SCREENS ── */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ── SETTINGS DRAWER ── */
+.settings-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;}
+.settings-overlay.open{display:block;}
+.settings-drawer{position:fixed;top:0;right:0;height:100vh;width:340px;background:white;box-shadow:-4px 0 24px rgba(0,0,0,.15);z-index:101;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease;}
+.settings-drawer.open{transform:translateX(0);}
+.s-drawer-header{background:var(--brand-blue);color:white;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;}
+.s-drawer-header h3{font-size:14px;font-weight:700;}
+.s-close{background:none;border:none;color:white;font-size:20px;cursor:pointer;}
+.s-body{flex:1;overflow-y:auto;padding:18px;}
+.s-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--accent-blue);border-bottom:1px solid var(--light-blue);padding-bottom:5px;margin-bottom:12px;}
+.s-field{margin-bottom:14px;}
+.s-field label{font-size:11px;font-weight:700;color:var(--gray-600);display:block;margin-bottom:4px;}
+.s-field input{width:100%;border:1px solid var(--gray-400);border-radius:5px;padding:7px 10px;font-size:14px;font-family:inherit;}
+.s-field input:focus{outline:none;border-color:var(--accent-blue);box-shadow:0 0 0 3px rgba(46,117,182,.15);}
+.s-field .hint{font-size:11px;color:var(--gray-600);margin-top:3px;}
+.s-footer{padding:14px 18px;border-top:1px solid var(--gray-200);display:flex;gap:8px;}
+.s-note{background:var(--yellow);border-radius:7px;padding:9px 12px;font-size:11px;color:var(--yellow-dark);margin-bottom:14px;}
+.thresholds-display{background:var(--light-blue);border-radius:7px;padding:9px 13px;font-size:12px;color:var(--brand-blue);line-height:1.9;}
+
+/* ── SUCCESS ANIMATION ── */
+@keyframes slideIn{from{transform:translateY(-10px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.animate-in{animation:slideIn .3s ease;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">Custom<span>Ink</span></div>
+  <div class="header-title">🤖 Pricing Assistant</div>
+  <div class="header-right">
+    <div class="header-badge">Phase 1 Prototype</div>
+    <button class="settings-btn" onclick="openSettings()">⚙️ Thresholds</button>
+  </div>
+</div>
+
+<!-- WORKFLOW PROGRESS -->
+<div class="workflow-bar">
+  <div class="workflow-steps">
+    <div class="wf-step active" id="wf-1">
+      <div class="num">1</div>
+      <div class="wf-step-label">Opportunity<span class="wf-step-sub">Link or create in SF</span></div>
+    </div>
+    <div class="wf-connector"></div>
+    <div class="wf-step" id="wf-2">
+      <div class="num">2</div>
+      <div class="wf-step-label">Intake Form<span class="wf-step-sub">Rep submits request</span></div>
+    </div>
+    <div class="wf-connector"></div>
+    <div class="wf-step" id="wf-3">
+      <div class="num">3</div>
+      <div class="wf-step-label">Analysis & Routing<span class="wf-step-sub">Classify + approval check</span></div>
+    </div>
+    <div class="wf-connector"></div>
+    <div class="wf-step" id="wf-4">
+      <div class="num">4</div>
+      <div class="wf-step-label">Salesforce Case<span class="wf-step-sub">Auto-populated + filed</span></div>
+    </div>
+    <div class="wf-connector"></div>
+    <div class="wf-step" id="wf-5">
+      <div class="num">5</div>
+      <div class="wf-step-label">Notifications<span class="wf-step-sub">Slack, email, approvals</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="settings-overlay" id="settings-overlay" onclick="closeSettings()"></div>
+<div class="settings-drawer" id="settings-drawer">
+  <div class="s-drawer-header"><h3>⚙️ Approval Thresholds</h3><button class="s-close" onclick="closeSettings()">✕</button></div>
+  <div class="s-body">
+    <div class="s-note">These are configurable — adjust anytime. Changes apply immediately to the next request analyzed.</div>
+    <div class="s-section-title">Discount Policy</div>
+    <div class="s-field">
+      <label>Auto-Approve Max Discount (%)</label>
+      <input type="number" id="cfg-disc" value="10" min="0" max="100"/>
+      <div class="hint">Discounts strictly below this % are auto-approved. Default: 10%</div>
+    </div>
+    <div class="s-section-title" style="margin-top:16px;">Quantity</div>
+    <div class="s-field">
+      <label>High-Quantity Flag (units)</label>
+      <input type="number" id="cfg-qty" value="500" min="1"/>
+      <div class="hint">At or above = mandatory human review. Default: 500</div>
+    </div>
+    <div class="s-section-title" style="margin-top:16px;">Finance</div>
+    <div class="s-field">
+      <label>Finance Notification Trigger ($)</label>
+      <input type="number" id="cfg-fin" value="10000" min="0"/>
+      <div class="hint">Opp values at or above trigger Finance email + Slack. Default: $10,000</div>
+    </div>
+    <div class="s-section-title" style="margin-top:16px;">Active Thresholds</div>
+    <div class="thresholds-display" id="thresh-display">Loading...</div>
+  </div>
+  <div class="s-footer">
+    <button class="btn btn-primary" style="flex:1;" onclick="saveSettings()">Save</button>
+    <button class="btn btn-ghost" onclick="resetSettings()">Reset</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ════════════════════════════════
+     SCREEN 1 — OPPORTUNITY
+════════════════════════════════ -->
+<div class="screen active" id="screen-1">
+
+  <!-- SF chrome wrapper -->
+  <div class="sf-chrome animate-in">
+    <div class="sf-topbar">
+      <div class="sf-topbar-logo">Sales<span>force</span></div>
+      <div class="sf-topbar-search">🔍 <span style="opacity:.6;font-size:12px;">Search Salesforce...</span></div>
+      <div class="sf-topbar-right"><div class="sf-avatar">TG</div></div>
+    </div>
+    <div class="sf-nav-bar">
+      <div class="sf-nav-item">Home</div>
+      <div class="sf-nav-item active">Opportunities</div>
+      <div class="sf-nav-item">Cases</div>
+      <div class="sf-nav-item">Accounts</div>
+    </div>
+
+    <div class="sf-content">
+
+      <!-- Mode toggle -->
+      <div style="display:flex;gap:0;margin-bottom:16px;border:1px solid var(--sf-border);border-radius:6px;overflow:hidden;max-width:420px;">
+        <button id="opp-tab-existing" onclick="oppMode('existing')"
+          style="flex:1;padding:9px 16px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;border:none;background:var(--sf-blue);color:white;transition:all .15s;">
+          🔍 Link Existing Opportunity
+        </button>
+        <button id="opp-tab-new" onclick="oppMode('new')"
+          style="flex:1;padding:9px 16px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;border:none;background:var(--sf-hover);color:var(--gray-600);transition:all .15s;">
+          ＋ Create New Opportunity
+        </button>
+      </div>
+
+      <!-- ── EXISTING OPP PANEL ── -->
+      <div id="opp-panel-existing">
+        <div class="sf-section">
+          <div class="sf-section-header">Search Opportunities</div>
+          <div class="sf-section-body">
+            <div style="display:flex;gap:8px;margin-bottom:14px;">
+              <input id="opp-search" type="text" placeholder="Search by account name, opportunity name, or ID..."
+                style="flex:1;border:1px solid var(--sf-border);border-radius:4px;padding:8px 12px;font-size:13px;font-family:inherit;"
+                oninput="filterOpps(this.value)"/>
+              <button class="sf-btn sf-btn-primary" onclick="filterOpps(document.getElementById('opp-search').value)">Search</button>
+            </div>
+            <div id="opp-results"></div>
+          </div>
+        </div>
+
+        <!-- Selected opp preview -->
+        <div id="opp-selected-preview" style="display:none;">
+          <div class="sf-section">
+            <div class="sf-section-header" style="background:#E8F4FD;">✅ Linked Opportunity</div>
+            <div class="sf-section-body">
+              <div class="sf-field-grid" id="opp-preview-fields"></div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="clearOppSelection()">← Choose Different</button>
+            <button class="btn btn-sf" onclick="proceedToIntake()">Continue to Pricing Request →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NEW OPP PANEL ── -->
+      <div id="opp-panel-new" style="display:none;">
+        <div class="sf-section">
+          <div class="sf-section-header">New Opportunity — Required Fields</div>
+          <div class="sf-section-body">
+            <div class="sf-field-grid">
+              <div class="sf-field">
+                <div class="sf-field-label">Opportunity Name <span style="color:var(--danger);">*</span></div>
+                <input id="new-opp-name" type="text" placeholder="e.g. Workday — Q3 Offsite Apparel"
+                  class="sf-field-value editable" style="font-size:13px;"/>
+              </div>
+              <div class="sf-field">
+                <div class="sf-field-label">Account Name <span style="color:var(--danger);">*</span></div>
+                <input id="new-opp-account" type="text" placeholder="e.g. Workday"
+                  class="sf-field-value editable" style="font-size:13px;"/>
+              </div>
+              <div class="sf-field">
+                <div class="sf-field-label">Sales Channel <span style="color:var(--danger);">*</span></div>
+                <select id="new-opp-channel" class="sf-field-value editable" style="font-size:13px;">
+                  <option value="">— Select —</option>
+                  <option value="IB">Inbound Sales</option>
+                  <option value="KAM">KAM — Key Account Manager</option>
+                  <option value="SAM">SAM — Strategic Account Manager</option>
+                  <option value="CD">Customer Development</option>
+                </select>
+              </div>
+              <div class="sf-field">
+                <div class="sf-field-label">Stage <span style="color:var(--danger);">*</span></div>
+                <select id="new-opp-stage" class="sf-field-value editable" style="font-size:13px;">
+                  <option value="Prospecting">Prospecting</option>
+                  <option value="Qualification">Qualification</option>
+                  <option value="Needs Analysis">Needs Analysis</option>
+                  <option value="Value Proposition" selected>Value Proposition</option>
+                  <option value="Proposal/Price Quote">Proposal / Price Quote</option>
+                  <option value="Negotiation">Negotiation</option>
+                </select>
+              </div>
+              <div class="sf-field">
+                <div class="sf-field-label">Amount ($) <span style="color:var(--danger);">*</span></div>
+                <input id="new-opp-amount" type="number" placeholder="e.g. 45000"
+                  class="sf-field-value editable" style="font-size:13px;"/>
+              </div>
+              <div class="sf-field">
+                <div class="sf-field-label">Close Date <span style="color:var(--danger);">*</span></div>
+                <input id="new-opp-closedate" type="date"
+                  class="sf-field-value editable" style="font-size:13px;"/>
+              </div>
+              <div class="sf-field">
+                <div class="sf-field-label">Rep Name <span style="color:var(--danger);">*</span></div>
+                <input id="new-opp-rep" type="text" placeholder="e.g. Jamie Torres"
+                  class="sf-field-value editable" style="font-size:13px;"/>
+              </div>
+              <div class="sf-field">
+                <div class="sf-field-label">Account LTV ($)</div>
+                <input id="new-opp-ltv" type="number" placeholder="From Embassy — optional"
+                  class="sf-field-value editable" style="font-size:13px;"/>
+              </div>
+              <div class="sf-field">
+                <div class="sf-field-label">Customer Contact</div>
+                <input id="new-opp-contact" type="text" placeholder="Name and email"
+                  class="sf-field-value editable" style="font-size:13px;"/>
+              </div>
+              <div class="sf-field">
+                <div class="sf-field-label">Probability (%)</div>
+                <input id="new-opp-prob" type="number" placeholder="e.g. 60" min="0" max="100"
+                  class="sf-field-value editable" style="font-size:13px;"/>
+              </div>
+            </div>
+            <div style="margin-top:16px;background:var(--sf-light);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--sf-blue);">
+              💡 <strong>Note:</strong> This opportunity will be created in Salesforce and immediately linked to the pricing case. The agent fills the case — the opportunity is yours to own.
+            </div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="oppMode('existing')">← Link Existing Instead</button>
+          <button class="btn btn-sf" onclick="createAndProceed()">Create Opportunity & Continue →</button>
+        </div>
+      </div>
+
+    </div><!-- /sf-content -->
+  </div><!-- /sf-chrome -->
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 2 — INTAKE FORM
+════════════════════════════════ -->
+<div class="screen" id="screen-2">
+  <div class="card">
+    <div class="card-header"><span>📋</span><h2>Step 1 — Pricing Request Intake</h2></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="section-div">Customer Information</div>
+        <div class="field">
+          <label>Customer / Organization <span class="req">*</span></label>
+          <input type="text" id="f-customer" placeholder="e.g. Workday, Katy ISD, Google"/>
+        </div>
+        <div class="field">
+          <label>Sales Channel <span class="req">*</span></label>
+          <select id="f-channel">
+            <option value="">— Select —</option>
+            <option value="IB">Inbound Sales</option>
+            <option value="KAM">KAM — Key Account Manager</option>
+            <option value="SAM">SAM — Strategic Account Manager</option>
+            <option value="CD">Customer Development</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Rep Name <span class="req">*</span></label>
+          <input type="text" id="f-rep" placeholder="e.g. Jamie Torres"/>
+        </div>
+        <div class="field">
+          <label>Account LTV ($)</label>
+          <input type="number" id="f-ltv" placeholder="From Embassy — leave blank if unknown"/>
+        </div>
+        <div class="field">
+          <label>Projected Opportunity Value ($) <span class="req">*</span></label>
+          <input type="number" id="f-oppval" placeholder="e.g. 45000"/>
+        </div>
+        <div class="field">
+          <label>Customer Contact</label>
+          <input type="text" id="f-contact" placeholder="Name and email"/>
+        </div>
+
+        <div class="section-div">Order Details</div>
+        <div class="field span2">
+          <label>Event / Initiative Description <span class="req">*</span></label>
+          <textarea id="f-event" rows="2" placeholder="e.g. Annual company offsite for 600 employees — branded polos, hats, totes for all attendees..."></textarea>
+        </div>
+        <div class="field span2">
+          <label>Products Requested <span class="req">*</span></label>
+          <textarea id="f-products" rows="2" placeholder="e.g. 600 Comfort Colors C1717 Polos + 400 Richardson 112 caps, 1-color screen print..."></textarea>
+        </div>
+        <div class="field">
+          <label>Total Estimated Quantity <span class="req">*</span></label>
+          <input type="number" id="f-qty" placeholder="e.g. 1000"/>
+        </div>
+        <div class="field">
+          <label>Customer Budget ($) <span class="req">*</span></label>
+          <input type="number" id="f-budget" placeholder="e.g. 38000"/>
+        </div>
+
+        <div class="section-div">Pricing Request</div>
+        <div class="field">
+          <label>Discount % Requested <span class="req">*</span></label>
+          <input type="number" id="f-disc" placeholder="e.g. 12" min="0" max="100"/>
+          <span class="field-hint">% off catalog/product price</span>
+        </div>
+        <div class="field">
+          <label>Request Type <span class="req">*</span></label>
+          <select id="f-type">
+            <option value="">— Select —</option>
+            <option value="A">Type A — Product / Offsite (standard products, event sourcing)</option>
+            <option value="B">Type B — Custom / Complex (non-standard pricing, RFP, contract-adjacent)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Customer Deadline <span class="req">*</span></label>
+          <input type="date" id="f-deadline"/>
+        </div>
+        <div class="field">
+          <label>Is this part of a formal Bid / RFP? <span class="req">*</span></label>
+          <select id="f-rfp">
+            <option value="">— Select —</option>
+            <option value="no">No — direct customer request</option>
+            <option value="yes">Yes — formal RFP / RFQ / RFI</option>
+          </select>
+        </div>
+        <div class="field span2">
+          <label>Special Notes / Context</label>
+          <textarea id="f-notes" rows="2" placeholder="e.g. Comparing us to a competitor on price, key account, prior relationship..."></textarea>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="goTo(1)">← Back to Opportunity</button>
+        <button class="btn btn-ghost" onclick="loadDemo()">📄 Load Demo Data</button>
+        <button class="btn btn-primary" onclick="runStep3()">Analyze Request →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 3 — ANALYSIS & ROUTING
+════════════════════════════════ -->
+<div class="screen" id="screen-3">
+  <div class="summary-strip animate-in" id="strip-3"></div>
+  <div class="card animate-in">
+    <div class="card-header"><span>🗂️</span><h2>Step 3 — Classification & Routing Decision</h2></div>
+    <div class="card-body" id="out-routing"></div>
+  </div>
+  <div class="card animate-in">
+    <div class="card-header"><span>✅</span><h2>Approval Analysis</h2></div>
+    <div class="card-body" id="out-approval"></div>
+  </div>
+  <div class="card animate-in">
+    <div class="card-header"><span>📊</span><h2>Priority Score</h2></div>
+    <div class="card-body" id="out-priority"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Revise Request</button>
+    <button class="btn btn-sf" onclick="runStep4()">Create Salesforce Case →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 4 — SALESFORCE CASE
+════════════════════════════════ -->
+<div class="screen" id="screen-4">
+  <div class="summary-strip animate-in" id="strip-4"></div>
+
+  <div class="card animate-in" style="margin-bottom:6px;">
+    <div class="card-body" style="padding:14px 20px; background: linear-gradient(135deg,#E8F4FD,#D6E4F0); display:flex; align-items:center; gap:14px;">
+      <div style="font-size:28px;">📁</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--brand-blue);">Salesforce Case Auto-Generated</div>
+        <div style="font-size:12px;color:var(--gray-600);">All fields below have been pre-populated from your intake form and the assistant's analysis. Review, adjust if needed, then confirm to file.</div>
+      </div>
+      <div style="margin-left:auto;"><span id="sf-case-num" style="font-family:monospace;font-size:13px;font-weight:700;color:var(--sf-blue);background:var(--sf-light);padding:4px 12px;border-radius:4px;border:1px solid #C9DCF4;"></span></div>
+    </div>
+  </div>
+
+  <!-- SALESFORCE MOCK UI -->
+  <div class="sf-chrome animate-in">
+    <div class="sf-topbar">
+      <div class="sf-topbar-logo">Sales<span>force</span></div>
+      <div class="sf-topbar-search">🔍 <span style="opacity:.6;font-size:12px;">Search...</span></div>
+      <div class="sf-topbar-right">
+        <div style="color:rgba(255,255,255,.6);font-size:12px;">⊞</div>
+        <div class="sf-avatar">TG</div>
+      </div>
+    </div>
+    <div class="sf-nav-bar">
+      <div class="sf-nav-item">Home</div>
+      <div class="sf-nav-item">Opportunities</div>
+      <div class="sf-nav-item active">Cases</div>
+      <div class="sf-nav-item">Accounts</div>
+      <div class="sf-nav-item">Reports</div>
+    </div>
+    <div class="sf-page-header">
+      <div class="sf-breadcrumb">Cases › Large Opportunity Team Request › <span id="sf-breadcrumb-name" style="color:var(--gray-600);"></span></div>
+      <div class="sf-page-title">
+        <span>📋</span>
+        <span id="sf-page-title-text"></span>
+        <span id="sf-case-status-pill"></span>
+      </div>
+      <div class="sf-page-actions">
+        <button class="sf-btn sf-btn-primary" onclick="confirmCase()">✓ Confirm & File Case</button>
+        <button class="sf-btn sf-btn-outline">Edit</button>
+        <button class="sf-btn sf-btn-outline">Clone</button>
+        <button class="sf-btn sf-btn-outline" style="color:var(--gray-600);border-color:var(--gray-400);">▾ More</button>
+      </div>
+    </div>
+    <div class="sf-content">
+      <div class="sf-two-col">
+        <!-- LEFT COLUMN -->
+        <div>
+          <!-- Case Information -->
+          <div class="sf-section">
+            <div class="sf-section-header">Case Information <span style="color:var(--sf-blue);font-size:11px;cursor:pointer;">✏ Edit</span></div>
+            <div class="sf-section-body">
+              <div class="sf-field-grid">
+                <div class="sf-field">
+                  <div class="sf-field-label">Case Number</div>
+                  <div class="sf-field-value sf-field-value--num" id="sf-f-casenum" style="color:var(--sf-blue);font-weight:600;font-family:monospace;"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Status</div>
+                  <div class="sf-field-value"><span class="sf-status-pill sf-status-new">New</span></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Case Type</div>
+                  <div class="sf-field-value highlight" id="sf-f-type"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Priority</div>
+                  <div class="sf-field-value" id="sf-f-priority"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Assigned Queue</div>
+                  <div class="sf-field-value highlight" id="sf-f-queue"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Owner</div>
+                  <div class="sf-field-value" id="sf-f-owner"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Date Opened</div>
+                  <div class="sf-field-value" id="sf-f-opened"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Deadline</div>
+                  <div class="sf-field-value" id="sf-f-deadline"></div>
+                </div>
+                <div class="sf-field full">
+                  <div class="sf-field-label">Subject</div>
+                  <div class="sf-field-value highlight" id="sf-f-subject" contenteditable="true" style="background:#FAFBFC;border:1px solid var(--sf-border);border-radius:3px;padding:5px 8px;cursor:text;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Opportunity Details -->
+          <div class="sf-section">
+            <div class="sf-section-header">Opportunity & Pricing Details <span style="color:var(--sf-blue);font-size:11px;cursor:pointer;">✏ Edit</span></div>
+            <div class="sf-section-body">
+              <div class="sf-field-grid">
+                <div class="sf-field">
+                  <div class="sf-field-label">Account Name</div>
+                  <div class="sf-field-value" style="color:var(--sf-blue);font-weight:600;" id="sf-f-account"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Sales Channel</div>
+                  <div class="sf-field-value" id="sf-f-channel"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Opportunity Value</div>
+                  <div class="sf-field-value highlight" id="sf-f-oppval"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Account LTV</div>
+                  <div class="sf-field-value" id="sf-f-ltv"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Discount Requested</div>
+                  <div class="sf-field-value" id="sf-f-disc" style="font-weight:700;"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Approval Status</div>
+                  <div class="sf-field-value" id="sf-f-approvstatus"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Quantity</div>
+                  <div class="sf-field-value" id="sf-f-qty"></div>
+                </div>
+                <div class="sf-field">
+                  <div class="sf-field-label">Budget</div>
+                  <div class="sf-field-value" id="sf-f-budget"></div>
+                </div>
+                <div class="sf-field full">
+                  <div class="sf-field-label">Products</div>
+                  <div class="sf-field-value" id="sf-f-products"></div>
+                </div>
+                <div class="sf-field full">
+                  <div class="sf-field-label">Event / Context</div>
+                  <div class="sf-field-value" id="sf-f-event"></div>
+                </div>
+                <div class="sf-field full">
+                  <div class="sf-field-label">Is RFP / Bid</div>
+                  <div class="sf-field-value" id="sf-f-rfp"></div>
+                </div>
+                <div class="sf-field full">
+                  <div class="sf-field-label">Special Notes</div>
+                  <div class="sf-field-value" id="sf-f-notes"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Open Tasks -->
+          <div class="sf-section">
+            <div class="sf-section-header">Open Tasks <span style="background:var(--sf-blue);color:white;border-radius:10px;padding:1px 7px;font-size:10px;" id="sf-task-count"></span></div>
+            <div class="sf-section-body" id="sf-tasks"></div>
+          </div>
+
+          <!-- Chatter -->
+          <div class="sf-section">
+            <div class="sf-section-header">Chatter / Activity</div>
+            <div class="sf-section-body" id="sf-chatter"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div>
+          <!-- Routing Summary -->
+          <div class="sf-section">
+            <div class="sf-section-header">🤖 Pricing Assistant Summary</div>
+            <div class="sf-section-body" id="sf-assistant-summary"></div>
+          </div>
+          <!-- Related -->
+          <div class="sf-section">
+            <div class="sf-section-header">Related</div>
+            <div class="sf-section-body">
+              <div style="font-size:11px;font-weight:700;color:var(--gray-600);margin-bottom:6px;">LINKED OPPORTUNITY</div>
+              <div class="sf-related-item"><span>💼</span><a href="#" id="sf-opp-link"></a></div>
+              <div style="font-size:11px;font-weight:700;color:var(--gray-600);margin:10px 0 6px;">CONTACT</div>
+              <div class="sf-related-item" id="sf-contact-rel"><span>👤</span><span></span></div>
+              <div style="font-size:11px;font-weight:700;color:var(--gray-600);margin:10px 0 6px;">SUBMITTED BY</div>
+              <div class="sf-related-item"><span>🙋</span><span id="sf-rep-rel"></span></div>
+            </div>
+          </div>
+          <!-- Approval Path -->
+          <div class="sf-section">
+            <div class="sf-section-header">Approval Path</div>
+            <div class="sf-section-body" id="sf-approval-path"></div>
+          </div>
+          <!-- Priority Matrix -->
+          <div class="sf-section">
+            <div class="sf-section-header">Priority Matrix Score</div>
+            <div class="sf-section-body" id="sf-priority-right"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:16px;">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Back to Analysis</button>
+    <button class="btn btn-sf" onclick="confirmCase()">✓ Confirm & File Case — Go to Notifications →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 5 — NOTIFICATIONS
+════════════════════════════════ -->
+<div class="screen" id="screen-5">
+  <div class="summary-strip animate-in" id="strip-5"></div>
+
+  <div class="card animate-in" style="margin-bottom:6px;">
+    <div class="card-body" style="padding:14px 20px;background:linear-gradient(135deg,#E2EFDA,#C6EFCE);display:flex;align-items:center;gap:14px;">
+      <div style="font-size:28px;">✅</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--green-dark);">Case Filed — Ready to Notify</div>
+        <div style="font-size:12px;color:#375623;">Salesforce case <span id="notif-case-num" style="font-family:monospace;font-weight:700;"></span> is open and routed. Send the messages below to kick off the workup.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card animate-in" id="messages-card">
+    <div class="card-header"><span>📨</span><h2>Step 4 — Generated Notifications</h2></div>
+    <div class="card-body" id="out-messages"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="startOver()">↺ Start New Request</button>
+    <button class="btn btn-success" onclick="markComplete()">✓ Mark Workflow Complete</button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ── THRESHOLDS ──────────────────────────────────────────────────
+const DEFAULTS = { autoDisc: 10, qty: 500, finance: 10000 };
+let T = { ...DEFAULTS };
+
+function openSettings() {
+  document.getElementById('cfg-disc').value = T.autoDisc;
+  document.getElementById('cfg-qty').value = T.qty;
+  document.getElementById('cfg-fin').value = T.finance;
+  updateThreshDisplay();
+  document.getElementById('settings-overlay').classList.add('open');
+  document.getElementById('settings-drawer').classList.add('open');
+}
+function closeSettings() {
+  document.getElementById('settings-overlay').classList.remove('open');
+  document.getElementById('settings-drawer').classList.remove('open');
+}
+function saveSettings() {
+  T.autoDisc = parseFloat(document.getElementById('cfg-disc').value) || DEFAULTS.autoDisc;
+  T.qty      = parseInt(document.getElementById('cfg-qty').value)    || DEFAULTS.qty;
+  T.finance  = parseFloat(document.getElementById('cfg-fin').value)  || DEFAULTS.finance;
+  updateThreshDisplay();
+  closeSettings();
+  const btn = document.querySelector('.settings-btn');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '✅ Saved!';
+  setTimeout(() => { btn.innerHTML = orig; }, 1800);
+}
+function resetSettings() {
+  T = { ...DEFAULTS };
+  document.getElementById('cfg-disc').value = T.autoDisc;
+  document.getElementById('cfg-qty').value  = T.qty;
+  document.getElementById('cfg-fin').value  = T.finance;
+  updateThreshDisplay();
+}
+function updateThreshDisplay() {
+  document.getElementById('thresh-display').innerHTML =
+    `✅ Auto-approve: discount < <strong>${T.autoDisc}%</strong><br>` +
+    `⚠️ High-qty flag: ≥ <strong>${T.qty.toLocaleString()} units</strong><br>` +
+    `💰 Finance trigger: opp ≥ <strong>$${T.finance.toLocaleString()}</strong>`;
+}
+document.addEventListener('DOMContentLoaded', updateThreshDisplay);
+
+// ── OPPORTUNITY DATA ─────────────────────────────────────────
+let selectedOpp = null;
+
+const DEMO_OPPS = [
+  { id:'OPP-004821', name:'Workday — Q3 Offsite Apparel', account:'Workday', channel:'KAM', channelTxt:'KAM — Key Account Manager', amount:47500, ltv:285000, stage:'Proposal/Price Quote', closeDate:'2026-06-30', rep:'Jamie Torres', contact:'Kasema Johnson — kasema.johnson@workday.com', prob:65 },
+  { id:'OPP-003917', name:'Katy ISD — Fall Spirit Wear 2026', account:'Katy ISD', channel:'CD', channelTxt:'Customer Development', amount:22000, ltv:94000, stage:'Needs Analysis', closeDate:'2026-08-15', rep:'Maria Chen', contact:'Anita Kier — anitalkier@katyisd.org', prob:50 },
+  { id:'OPP-005103', name:'Google — Austin Office Gear', account:'Google', channel:'SAM', channelTxt:'SAM — Strategic Account Manager', amount:61000, ltv:410000, stage:'Value Proposition', closeDate:'2026-05-31', rep:'Derek Walsh', contact:'Brandon Thomas — thomasbrandon@google.com', prob:70 },
+  { id:'OPP-002744', name:'Klaviyo — All-Hands Swag Kit', account:'Klaviyo', channel:'IB', channelTxt:'Inbound Sales', amount:18500, ltv:52000, stage:'Qualification', closeDate:'2026-07-10', rep:'Priya Nair', contact:'Jessica Fretts — jessica.fretts@klaviyo.com', prob:40 },
+  { id:'OPP-005388', name:'Athletes for Hope — Charity Event', account:'Athletes for Hope', channel:'IB', channelTxt:'Inbound Sales', amount:9800, ltv:28000, stage:'Prospecting', closeDate:'2026-09-01', rep:'Tom Burke', contact:'Diana Venezia Reilly — dvenezia@athletesforhope.org', prob:35 },
+];
+
+function oppMode(mode) {
+  document.getElementById('opp-panel-existing').style.display = mode === 'existing' ? '' : 'none';
+  document.getElementById('opp-panel-new').style.display     = mode === 'new'      ? '' : 'none';
+  document.getElementById('opp-tab-existing').style.background = mode === 'existing' ? 'var(--sf-blue)'   : 'var(--sf-hover)';
+  document.getElementById('opp-tab-existing').style.color     = mode === 'existing' ? 'white'             : 'var(--gray-600)';
+  document.getElementById('opp-tab-new').style.background     = mode === 'new'      ? 'var(--sf-blue)'    : 'var(--sf-hover)';
+  document.getElementById('opp-tab-new').style.color          = mode === 'new'      ? 'white'             : 'var(--gray-600)';
+}
+
+function filterOpps(q) {
+  const term = q.toLowerCase();
+  const matches = DEMO_OPPS.filter(o =>
+    !term ||
+    o.name.toLowerCase().includes(term) ||
+    o.account.toLowerCase().includes(term) ||
+    o.id.toLowerCase().includes(term)
+  );
+  const el = document.getElementById('opp-results');
+  if (!matches.length) {
+    el.innerHTML = `<div style="padding:16px;text-align:center;color:var(--gray-600);font-size:13px;">No opportunities found. Try a different search or create a new one.</div>`;
+    return;
+  }
+  el.innerHTML = matches.map(o => `
+    <div onclick="selectOpp('${o.id}')" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--sf-border);border-radius:5px;margin-bottom:6px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='var(--sf-light)'" onmouseout="this.style.background=''">
+      <div style="font-size:18px;">💼</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;color:var(--sf-blue);font-size:13px;">${o.name}</div>
+        <div style="font-size:11px;color:var(--gray-600);">
+          ${o.id} &nbsp;·&nbsp; ${o.account} &nbsp;·&nbsp; ${o.channelTxt.split(' ')[0]} &nbsp;·&nbsp; $${o.amount.toLocaleString()} &nbsp;·&nbsp; ${o.stage}
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--success);">Select →</div>
+    </div>`).join('');
+}
+
+function selectOpp(id) {
+  selectedOpp = DEMO_OPPS.find(o => o.id === id);
+  if (!selectedOpp) return;
+  document.getElementById('opp-results').innerHTML = '';
+  document.getElementById('opp-search').value = selectedOpp.name;
+  const closeStr = new Date(selectedOpp.closeDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  document.getElementById('opp-preview-fields').innerHTML = `
+    <div class="sf-field"><div class="sf-field-label">Opportunity</div><div class="sf-field-value highlight">${selectedOpp.name}</div></div>
+    <div class="sf-field"><div class="sf-field-label">ID</div><div class="sf-field-value" style="font-family:monospace;">${selectedOpp.id}</div></div>
+    <div class="sf-field"><div class="sf-field-label">Account</div><div class="sf-field-value" style="color:var(--sf-blue);font-weight:600;">${selectedOpp.account}</div></div>
+    <div class="sf-field"><div class="sf-field-label">Channel</div><div class="sf-field-value">${selectedOpp.channelTxt}</div></div>
+    <div class="sf-field"><div class="sf-field-label">Amount</div><div class="sf-field-value highlight">$${selectedOpp.amount.toLocaleString()}</div></div>
+    <div class="sf-field"><div class="sf-field-label">Account LTV</div><div class="sf-field-value">$${selectedOpp.ltv.toLocaleString()}</div></div>
+    <div class="sf-field"><div class="sf-field-label">Stage</div><div class="sf-field-value">${selectedOpp.stage}</div></div>
+    <div class="sf-field"><div class="sf-field-label">Close Date</div><div class="sf-field-value">${closeStr}</div></div>
+    <div class="sf-field"><div class="sf-field-label">Rep</div><div class="sf-field-value">${selectedOpp.rep}</div></div>
+    <div class="sf-field"><div class="sf-field-label">Contact</div><div class="sf-field-value">${selectedOpp.contact}</div></div>`;
+  document.getElementById('opp-selected-preview').style.display = '';
+}
+
+function clearOppSelection() {
+  selectedOpp = null;
+  document.getElementById('opp-selected-preview').style.display = 'none';
+  document.getElementById('opp-search').value = '';
+  filterOpps('');
+}
+
+function createAndProceed() {
+  const name    = document.getElementById('new-opp-name').value.trim();
+  const account = document.getElementById('new-opp-account').value.trim();
+  const channel = document.getElementById('new-opp-channel').value;
+  const amount  = document.getElementById('new-opp-amount').value;
+  const closeDate = document.getElementById('new-opp-closedate').value;
+  const rep     = document.getElementById('new-opp-rep').value.trim();
+  if (!name || !account || !channel || !amount || !closeDate || !rep) {
+    alert('Please fill in all required fields to create the opportunity.');
+    return;
+  }
+  const channelTxt = document.getElementById('new-opp-channel').options[document.getElementById('new-opp-channel').selectedIndex].text;
+  selectedOpp = {
+    id: 'OPP-' + String(Math.floor(Math.random()*90000+10000)),
+    name, account, channel, channelTxt,
+    amount: parseFloat(amount),
+    ltv: parseFloat(document.getElementById('new-opp-ltv').value) || 0,
+    stage: document.getElementById('new-opp-stage').value,
+    closeDate,
+    rep,
+    contact: document.getElementById('new-opp-contact').value,
+    prob: parseInt(document.getElementById('new-opp-prob').value) || 50,
+    isNew: true,
+  };
+  proceedToIntake();
+}
+
+function proceedToIntake() {
+  if (!selectedOpp) { alert('Please select or create an opportunity first.'); return; }
+  // Pre-fill intake form from opportunity
+  document.getElementById('f-customer').value = selectedOpp.account;
+  document.getElementById('f-channel').value   = selectedOpp.channel;
+  document.getElementById('f-rep').value       = selectedOpp.rep;
+  document.getElementById('f-ltv').value       = selectedOpp.ltv || '';
+  document.getElementById('f-oppval').value    = selectedOpp.amount;
+  document.getElementById('f-contact').value   = selectedOpp.contact;
+  goTo(2);
+}
+
+// Init opp list on load
+document.addEventListener('DOMContentLoaded', () => { updateThreshDisplay(); filterOpps(''); });
+
+// ── STATE ──────────────────────────────────────────────────────
+let D = {};   // intake data
+let A = {};   // analysis
+let caseNum = '';
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function goTo(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(`screen-${n}`).classList.add('active');
+  ['wf-1','wf-2','wf-3','wf-4','wf-5'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.classList.remove('active','done');
+    if (i + 1 < n) el.classList.add('done');
+    if (i + 1 === n) el.classList.add('active');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function startOver() {
+  selectedOpp = null;
+  clearOppSelection();
+  document.getElementById('opp-search').value = '';
+  filterOpps('');
+  oppMode('existing');
+  goTo(1);
+}
+
+// ── DEMO DATA ─────────────────────────────────────────────────
+function loadDemo() {
+  // Also pre-select the Workday demo opportunity if none selected
+  if (!selectedOpp) { selectOpp('OPP-004821'); }
+  document.getElementById('f-customer').value = 'Workday';
+  document.getElementById('f-channel').value  = 'KAM';
+  document.getElementById('f-rep').value      = 'Jamie Torres';
+  document.getElementById('f-ltv').value      = '285000';
+  document.getElementById('f-oppval').value   = '47500';
+  document.getElementById('f-contact').value  = 'Kasema Johnson — kasema.johnson@workday.com';
+  document.getElementById('f-event').value    = 'Annual company offsite for 600 employees. Need branded polos, caps, and tote bags with Workday logo for all attendees.';
+  document.getElementById('f-products').value = '600 Comfort Colors C1717 Polos + 400 Richardson 112 Trucker Caps + 400 Liberty Bags 8882 Totes — all with 1-color embroidery/screen print';
+  document.getElementById('f-qty').value      = '1400';
+  document.getElementById('f-budget').value   = '38000';
+  document.getElementById('f-disc').value     = '13';
+  document.getElementById('f-type').value     = 'A';
+  const d = new Date(); d.setDate(d.getDate() + 14);
+  document.getElementById('f-deadline').value = d.toISOString().split('T')[0];
+  document.getElementById('f-rfp').value      = 'no';
+  document.getElementById('f-notes').value    = 'Workday is a key account — competing quote from another vendor. Kasema is the point of contact and needs a response within two weeks.';
+}
+
+// ── VALIDATION ────────────────────────────────────────────────
+function validate() {
+  const req = ['f-customer','f-channel','f-rep','f-oppval','f-event','f-products','f-qty','f-budget','f-disc','f-type','f-deadline','f-rfp'];
+  let ok = true;
+  req.forEach(id => {
+    const el = document.getElementById(id);
+    el.value.trim() ? el.classList.remove('error') : (el.classList.add('error'), ok = false);
+  });
+  if (!ok) alert('Please fill in all required fields (marked *).');
+  return ok;
+}
+
+// ── PRIORITY ─────────────────────────────────────────────────
+function calcPriority(data) {
+  let score = 0, notes = [];
+  const daysOut = Math.ceil((new Date(data.deadline) - new Date()) / 864e5);
+  if (daysOut < 1)       { score += 3; notes.push(`Due date: <24 hrs (HIGH)`); }
+  else if (daysOut <= 7) { score += 2; notes.push(`Due date: ${daysOut} day${daysOut===1?'':'s'} (MID)`); }
+  else                   { score += 1; notes.push(`Due date: ${daysOut} days out (LOW)`); }
+
+  const opp = parseFloat(data.oppval);
+  if (opp > 50000)       { score += 3; notes.push('Opp value: >$50K (HIGH)'); }
+  else if (opp >= 25000) { score += 2; notes.push('Opp value: $25K–$50K (MID)'); }
+  else                   { score += 1; notes.push('Opp value: <$25K (LOW)'); }
+
+  const ltv = parseFloat(data.ltv) || 0;
+  if (ltv > 100000)      { score += 3; notes.push('LTV: >$100K (HIGH)'); }
+  else if (ltv >= 50000) { score += 2; notes.push('LTV: $50K–$100K (MID)'); }
+  else                   { score += 1; notes.push(ltv > 0 ? 'LTV: <$50K (LOW)' : 'LTV: Unknown (LOW)'); }
+
+  const qty = parseInt(data.qty);
+  const qH = T.qty, qM = Math.round(T.qty/2);
+  if (qty >= qH)       { score += 3; notes.push(`Qty: ≥${qH.toLocaleString()} units (HIGH — human review)`); }
+  else if (qty >= qM)  { score += 2; notes.push(`Qty: ${qM.toLocaleString()}–${qH.toLocaleString()} units (MID)`); }
+  else                 { score += 1; notes.push(`Qty: <${qM.toLocaleString()} units (LOW)`); }
+
+  const disc = parseFloat(data.disc);
+  const dH = T.autoDisc * 1.5;
+  if (disc >= dH)         { score += 3; notes.push(`Discount: ≥${dH}% (HIGH complexity)`); }
+  else if (disc >= T.autoDisc) { score += 2; notes.push(`Discount: ${T.autoDisc}–${dH}% (MID complexity)`); }
+  else                    { score += 1; notes.push(`Discount: <${T.autoDisc}% (LOW complexity)`); }
+
+  let label, color;
+  if (score >= 12) { label = '🔴 Critical'; color = '#DC3545'; }
+  else if (score >= 8) { label = '🟠 High'; color = '#FD7E14'; }
+  else if (score >= 5) { label = '🟡 Medium'; color = '#FFC107'; }
+  else                 { label = '🟢 Low'; color = '#28A745'; }
+  return { score, max: 15, label, color, notes };
+}
+
+// ── STEP 3: ANALYSIS ─────────────────────────────────────────
+function runStep3() {
+  if (!validate()) return;
+  D = {
+    customer:  document.getElementById('f-customer').value,
+    channel:   document.getElementById('f-channel').value,
+    channelTxt:document.getElementById('f-channel').options[document.getElementById('f-channel').selectedIndex].text,
+    rep:       document.getElementById('f-rep').value,
+    ltv:       document.getElementById('f-ltv').value || '0',
+    oppval:    document.getElementById('f-oppval').value,
+    contact:   document.getElementById('f-contact').value,
+    event:     document.getElementById('f-event').value,
+    products:  document.getElementById('f-products').value,
+    qty:       document.getElementById('f-qty').value,
+    budget:    document.getElementById('f-budget').value,
+    disc:      document.getElementById('f-disc').value,
+    type:      document.getElementById('f-type').value,
+    deadline:  document.getElementById('f-deadline').value,
+    rfp:       document.getElementById('f-rfp').value,
+    notes:     document.getElementById('f-notes').value,
+  };
+
+  const disc    = parseFloat(D.disc);
+  const qty     = parseInt(D.qty);
+  const oppval  = parseFloat(D.oppval);
+  const isRFP   = D.rfp === 'yes';
+  const ch      = D.channel;
+
+  // ROUTING
+  let routeTo, routeLabel, routeDesc, routeClass;
+  if (D.type === 'B' || isRFP) {
+    routeTo = 'B';
+    routeLabel = "Megan's Team — Deal Desk";
+    routeDesc = isRFP
+      ? "Formal bid (RFP/RFQ/RFI) — automatically routes to Deal Desk for full review."
+      : "Custom/complex pricing flagged — Deal Desk oversight required.";
+    routeClass = 'type-b';
+  } else {
+    routeTo = 'A';
+    routeLabel = "Cody Perry's Team — Operations / Fulfillment";
+    routeDesc = "Standard product or offsite pricing. Operations will run the supplier outreach and pricing workup.";
+    routeClass = 'type-a';
+  }
+
+  // APPROVAL CHECKS
+  let checks = [], financeReq = false;
+  if (disc < T.autoDisc) {
+    checks.push({ t:'pass', h:`Discount ${disc}% — within auto-approve threshold (<${T.autoDisc}%)`, b:'No escalation needed. Assistant approves.' });
+  } else if (ch === 'IB') {
+    checks.push({ t:'fail', h:`Discount ${disc}% on Inbound Sales — manager sign-off required`, b:`IB Sales must obtain manager approval for any discount ≥ ${T.autoDisc}%.` });
+  } else {
+    checks.push({ t:'warn', h:`Discount ${disc}% requires Deal Desk review`, b:`Non-IB channels route discounts ≥ ${T.autoDisc}% to Deal Desk for recommendation.` });
+  }
+  if (qty >= T.qty) {
+    checks.push({ t:'warn', h:`High quantity: ${qty.toLocaleString()} units (≥ threshold of ${T.qty.toLocaleString()})`, b:'Mandatory human review required regardless of discount percentage.' });
+  } else {
+    checks.push({ t:'pass', h:`Quantity ${qty.toLocaleString()} units — within normal range`, b:`Below the ${T.qty.toLocaleString()}-unit threshold for mandatory review.` });
+  }
+  if (oppval >= T.finance) {
+    financeReq = true;
+    checks.push({ t:'warn', h:`Finance notification required — opp value $${oppval.toLocaleString()} ≥ $${T.finance.toLocaleString()}`, b:'Finance team must be looped in. Auto-notification generated.' });
+  } else {
+    checks.push({ t:'pass', h:`Opp value $${oppval.toLocaleString()} — below Finance threshold ($${T.finance.toLocaleString()})`, b:'No Finance notification required.' });
+  }
+  if (isRFP) {
+    checks.push({ t:'warn', h:'Formal bid — full Legal review pathway applies', b:'All RFPs require Deal Desk and potentially Legal review before responding.' });
+  } else {
+    checks.push({ t:'pass', h:'Not a formal bid — standard pricing pathway', b:'No automatic Legal review required.' });
+  }
+
+  const hasF = checks.some(c => c.t === 'fail');
+  const hasW = checks.some(c => c.t === 'warn');
+  let approvalLevel, approvalLabel;
+  if (!hasF && !hasW) { approvalLevel = 'auto'; approvalLabel = '✅ Auto-Approved'; }
+  else if (hasF || (ch === 'IB' && disc >= T.autoDisc)) { approvalLevel = 'manager'; approvalLabel = '⚠️ Manager Sign-Off Required'; }
+  else { approvalLevel = 'review'; approvalLabel = '🔍 Escalation Required — Deal Desk Review'; }
+
+  const priority = calcPriority(D);
+  const daysOut = Math.ceil((new Date(D.deadline) - new Date()) / 864e5);
+
+  A = { routeTo, routeLabel, routeDesc, routeClass, approvalLevel, approvalLabel, checks, priority, financeReq, disc, qty, oppval, isRFP, daysOut };
+
+  // STRIP
+  const strip = `
+    <div class="strip-item"><span class="s-label">Customer</span><span class="s-val">${D.customer}</span></div>
+    <div class="strip-item"><span class="s-label">Channel</span><span class="s-val">${D.channelTxt.split(' ')[0]}</span></div>
+    <div class="strip-item"><span class="s-label">Opp Value</span><span class="s-val">$${oppval.toLocaleString()}</span></div>
+    <div class="strip-item"><span class="s-label">Quantity</span><span class="s-val">${qty.toLocaleString()} units</span></div>
+    <div class="strip-item"><span class="s-label">Due In</span><span class="s-val">${daysOut} day${daysOut!==1?'s':''}</span></div>`;
+  document.getElementById('strip-3').innerHTML = strip;
+  document.getElementById('strip-4').innerHTML = strip;
+  document.getElementById('strip-5').innerHTML = strip;
+
+  // ROUTING OUTPUT
+  const routeBadge = routeTo === 'A'
+    ? '<span class="badge badge-a">📦 Type A — Operations</span>'
+    : '<span class="badge badge-b">📁 Type B — Deal Desk</span>';
+  document.getElementById('out-routing').innerHTML = `
+    <div class="routing-card ${routeClass}">
+      <div class="routing-label">Routing Decision</div>
+      <div class="routing-title">${routeLabel}</div>
+      <div class="routing-desc">${routeDesc}</div>
+      <div>${routeBadge}</div>
+    </div>
+    <div style="margin-top:14px;">
+      <div class="detail-row"><span class="detail-label">Case Type:</span><span>${D.type === 'A' ? 'Type A — Product / Offsite' : 'Type B — Custom / Complex'}</span></div>
+      <div class="detail-row"><span class="detail-label">Discount:</span><span>${disc}% ${disc < T.autoDisc ? '✅ Auto-approved' : '⚠️ Requires escalation'}</span></div>
+      <div class="detail-row"><span class="detail-label">Quantity:</span><span>${qty.toLocaleString()} units ${qty >= T.qty ? '⚠️ High-qty flag' : '✅ Normal range'}</span></div>
+      <div class="detail-row"><span class="detail-label">Finance needed:</span><span>${financeReq ? '⚠️ Yes — $' + oppval.toLocaleString() + ' ≥ $' + T.finance.toLocaleString() : '✅ No'}</span></div>
+      <div class="detail-row"><span class="detail-label">Is RFP/Bid:</span><span>${isRFP ? '⚠️ Yes — full review pathway' : '✅ No'}</span></div>
+    </div>`;
+
+  // APPROVAL OUTPUT
+  const approvalBadge = approvalLevel === 'auto'
+    ? '<span class="badge badge-auto">✅ Auto-Approved</span>'
+    : approvalLevel === 'manager'
+    ? '<span class="badge badge-manager">⚠️ Manager Sign-Off Required</span>'
+    : '<span class="badge badge-review">🔍 Deal Desk Review Required</span>';
+  const checksHTML = checks.map(c => `
+    <div class="check-item">
+      <div class="check-icon ${c.t==='pass'?'ci-pass':c.t==='fail'?'ci-fail':'ci-warn'}">${c.t==='pass'?'✓':c.t==='fail'?'✗':'!'}</div>
+      <div class="check-text"><strong>${c.h}</strong><span>${c.b}</span></div>
+    </div>`).join('');
+  document.getElementById('out-approval').innerHTML = `
+    <div style="margin-bottom:14px;">${approvalBadge}</div>
+    ${checksHTML}
+    ${financeReq ? `<div style="margin-top:14px;background:var(--orange);border-radius:7px;padding:11px 14px;"><strong style="color:var(--orange-dark);">💰 Finance Notification Will Be Generated</strong><br><span style="font-size:12px;color:var(--orange-dark);">An automated email + Slack to the Finance team will be included in Step 4.</span></div>` : ''}`;
+
+  // PRIORITY
+  const pct = Math.round((priority.score / priority.max) * 100);
+  document.getElementById('out-priority').innerHTML = `
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:14px;">
+      <div style="font-size:40px;font-weight:800;color:${priority.color};">${priority.score}</div>
+      <div><div style="font-size:17px;font-weight:700;color:${priority.color};">${priority.label}</div><div style="font-size:11px;color:var(--gray-600);">Score: ${priority.score} / ${priority.max}</div></div>
+      <div style="flex:1;background:var(--gray-200);border-radius:4px;height:8px;margin-left:6px;">
+        <div style="background:${priority.color};width:${pct}%;height:8px;border-radius:4px;transition:width .5s;"></div>
+      </div>
+    </div>
+    ${priority.notes.map(n=>`<div class="detail-row"><span style="font-size:12px;color:var(--gray-600);">→ ${n}</span></div>`).join('')}`;
+
+  goTo(3);
+}
+
+// ── STEP 4: SALESFORCE CASE ───────────────────────────────────
+function runStep4() {
+  // Generate a realistic-looking case number
+  caseNum = 'CS-' + String(Math.floor(Math.random() * 40000 + 60000));
+  const today = new Date();
+  const todayStr = today.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  const deadlineStr = new Date(D.deadline).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  const subject = `Custom Pricing Request — ${D.customer} | Due ${deadlineStr}`;
+  const queueName = A.routeTo === 'A' ? 'Operations — Fulfillment Specialists' : 'Deal Desk — Complex Order';
+  const ownerName = A.routeTo === 'A' ? 'Cody Perry' : 'Megan [Deal Desk]';
+
+  // Determine SF priority
+  const sfPri = A.priority.score >= 12 ? '🔴 Critical' : A.priority.score >= 8 ? '🟠 High' : A.priority.score >= 5 ? '🟡 Medium' : '🟢 Low';
+
+  // Approval status for SF
+  const sfApproval = A.approvalLevel === 'auto' ? '✅ Auto-Approved' : A.approvalLevel === 'manager' ? '⚠️ Pending Manager Sign-Off' : '🔍 Pending Deal Desk Review';
+
+  // Generate tasks
+  const daysOut = A.daysOut;
+  const addDays = (n) => {
+    const d = new Date(); d.setDate(d.getDate() + n);
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  };
+  const tasks = [];
+  if (A.approvalLevel === 'manager') {
+    tasks.push({ label: `Manager approval required — ${D.disc}% discount`, due: addDays(1), owner: D.rep, urgent: true });
+  }
+  if (A.financeReq) {
+    tasks.push({ label: 'Finance team notification — opp value threshold', due: addDays(1), owner: 'Tara Green', urgent: true });
+  }
+  tasks.push({ label: `Supplier outreach / pricing workup`, due: addDays(Math.max(2, Math.floor(daysOut * 0.4))), owner: ownerName });
+  tasks.push({ label: 'Return pricing to Sales rep', due: addDays(Math.max(3, Math.floor(daysOut * 0.65))), owner: ownerName });
+  tasks.push({ label: `Customer deadline — final response to ${D.customer}`, due: deadlineStr, owner: D.rep });
+
+  // Approval path
+  let approvalSteps = [];
+  if (A.approvalLevel === 'auto') {
+    approvalSteps = [
+      { icon: '✅', label: 'Pricing Assistant', status: 'Approved', color: '#28A745' },
+      { icon: '👤', label: queueName, status: 'Ready for workup', color: '#2E75B6' },
+    ];
+  } else if (A.approvalLevel === 'manager') {
+    approvalSteps = [
+      { icon: '🤖', label: 'Pricing Assistant', status: 'Flagged → manager needed', color: '#FD7E14' },
+      { icon: '👤', label: 'IB Sales Manager', status: '⏳ Awaiting sign-off', color: '#FD7E14' },
+      { icon: '👤', label: queueName, status: 'Pending approval', color: '#CED4DA' },
+    ];
+  } else {
+    approvalSteps = [
+      { icon: '🤖', label: 'Pricing Assistant', status: 'Escalated for review', color: '#FD7E14' },
+      { icon: '👤', label: 'Deal Desk', status: '⏳ Review + recommendation', color: '#FD7E14' },
+      A.financeReq ? { icon: '💰', label: 'Finance Team', status: '⏳ Finance review', color: '#FD7E14' } : null,
+      { icon: '👤', label: 'Justin / Marie / Ryan', status: 'Pending', color: '#CED4DA' },
+    ].filter(Boolean);
+  }
+
+  // Chatter
+  const chatterEntries = [
+    { initials: 'PA', bg: '#2E75B6', name: 'Pricing Assistant (Auto)', time: 'Just now',
+      msg: `Case created and routed to ${queueName}. Approval status: ${sfApproval}. Priority: ${A.priority.label}. ${A.financeReq ? 'Finance notification pending.' : ''} ${tasks.length} tasks generated with due dates through ${deadlineStr}.` },
+    { initials: D.rep.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2), bg: '#8E44AD', name: D.rep, time: 'Just now',
+      msg: `Submitted pricing request for ${D.customer}. Customer deadline ${deadlineStr}. ${D.notes || ''}` },
+  ];
+  if (A.approvalLevel === 'manager') {
+    chatterEntries.push({ initials: 'PA', bg: '#E07B00', name: 'Pricing Assistant (Auto)', time: 'Just now',
+      msg: `⚠️ @[IB Sales Manager] — approval needed before workup can begin. Discount requested: ${D.disc}% (≥ ${T.autoDisc}% threshold). Please reply to approve or decline.` });
+  }
+
+  // POPULATE SF FIELDS
+  document.getElementById('sf-case-num').textContent = caseNum;
+  document.getElementById('sf-breadcrumb-name').textContent = subject;
+  document.getElementById('sf-page-title-text').textContent = subject;
+  document.getElementById('sf-case-status-pill').innerHTML = `<span class="sf-status-pill sf-status-new" style="margin-left:10px;font-size:14px;">New</span>`;
+  document.getElementById('sf-f-casenum').textContent = caseNum;
+  document.getElementById('sf-f-type').textContent = A.routeTo === 'A' ? 'Type A — Product / Offsite Pricing' : 'Type B — Custom / Complex Pricing';
+  document.getElementById('sf-f-priority').innerHTML = `<strong>${sfPri}</strong> &nbsp;<span style="font-size:11px;color:var(--gray-600);">(Score: ${A.priority.score}/15)</span>`;
+  document.getElementById('sf-f-queue').textContent = queueName;
+  document.getElementById('sf-f-owner').textContent = ownerName;
+  document.getElementById('sf-f-opened').textContent = todayStr;
+  document.getElementById('sf-f-deadline').textContent = deadlineStr;
+  document.getElementById('sf-f-subject').textContent = subject;
+  document.getElementById('sf-f-account').textContent = D.customer;
+  document.getElementById('sf-f-channel').textContent = D.channelTxt;
+  document.getElementById('sf-f-oppval').textContent = '$' + parseFloat(D.oppval).toLocaleString();
+  document.getElementById('sf-f-ltv').textContent = D.ltv && D.ltv !== '0' ? '$' + parseFloat(D.ltv).toLocaleString() : 'Unknown';
+  document.getElementById('sf-f-disc').textContent = D.disc + '%';
+  document.getElementById('sf-f-disc').style.color = parseFloat(D.disc) >= T.autoDisc ? 'var(--warning)' : 'var(--success)';
+  document.getElementById('sf-f-approvstatus').textContent = sfApproval;
+  document.getElementById('sf-f-qty').textContent = parseInt(D.qty).toLocaleString() + ' units';
+  document.getElementById('sf-f-budget').textContent = '$' + parseFloat(D.budget).toLocaleString();
+  document.getElementById('sf-f-products').textContent = D.products;
+  document.getElementById('sf-f-event').textContent = D.event;
+  document.getElementById('sf-f-rfp').textContent = A.isRFP ? 'Yes — formal bid' : 'No';
+  document.getElementById('sf-f-notes').textContent = D.notes || '—';
+  document.getElementById('sf-opp-link').textContent = selectedOpp ? `${selectedOpp.name} (${selectedOpp.id})` : `${D.customer} — Pricing Opportunity`;
+  document.getElementById('sf-contact-rel').innerHTML = `<span>👤</span><span style="color:var(--sf-blue);">${D.contact || 'Not specified'}</span>`;
+  document.getElementById('sf-rep-rel').textContent = `${D.rep} (${D.channelTxt.split(' ')[0]})`;
+  document.getElementById('sf-task-count').textContent = tasks.length;
+
+  document.getElementById('sf-tasks').innerHTML = tasks.map(t => `
+    <div class="sf-task">
+      <div class="sf-task-check" style="${t.urgent?'border-color:var(--warning);':''}"></div>
+      <div class="sf-task-content">
+        <strong style="${t.urgent?'color:var(--warning);':''}">${t.urgent?'⚠️ ':''}${t.label}</strong>
+        <span>Due: ${t.due} &nbsp;·&nbsp; Owner: ${t.owner}</span>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('sf-chatter').innerHTML = chatterEntries.map(e => `
+    <div class="sf-chatter-item">
+      <div class="sf-chatter-avatar" style="background:${e.bg};color:white;">${e.initials}</div>
+      <div class="sf-chatter-body">
+        <strong>${e.name}</strong> <span style="font-size:11px;color:var(--gray-600);">· ${e.time}</span>
+        <p style="margin-top:5px;font-size:12px;line-height:1.5;">${e.msg}</p>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('sf-assistant-summary').innerHTML = `
+    <div class="detail-row"><span class="detail-label">Route to:</span><span style="font-weight:700;">${A.routeLabel}</span></div>
+    <div class="detail-row"><span class="detail-label">Approval:</span><span>${A.approvalLabel}</span></div>
+    <div class="detail-row"><span class="detail-label">Priority:</span><span style="color:${A.priority.color};font-weight:700;">${A.priority.label}</span></div>
+    <div class="detail-row"><span class="detail-label">Finance alert:</span><span>${A.financeReq ? '⚠️ Required' : '✅ Not required'}</span></div>
+    <div class="detail-row"><span class="detail-label">Days to deadline:</span><span>${A.daysOut} days</span></div>
+    <hr style="margin:10px 0;border:none;border-top:1px solid var(--sf-border);">
+    <div style="font-size:11px;color:var(--gray-600);">Generated by Pricing Assistant on ${todayStr}</div>`;
+
+  document.getElementById('sf-approval-path').innerHTML = approvalSteps.map((s, i) => `
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 0;${i<approvalSteps.length-1?'border-bottom:1px solid var(--sf-border);':''}">
+      <div style="width:24px;height:24px;border-radius:50%;background:${s.color}22;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;">${s.icon}</div>
+      <div style="font-size:12px;"><strong style="display:block;color:var(--gray-800);">${s.label}</strong><span style="color:${s.color};font-size:11px;">${s.status}</span></div>
+    </div>`).join('');
+
+  const pct = Math.round((A.priority.score / A.priority.max) * 100);
+  document.getElementById('sf-priority-right').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div style="font-size:28px;font-weight:800;color:${A.priority.color};">${A.priority.score}</div>
+      <div style="flex:1;background:var(--gray-200);border-radius:4px;height:7px;">
+        <div style="background:${A.priority.color};width:${pct}%;height:7px;border-radius:4px;"></div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:${A.priority.color};">${A.priority.label}</div>
+    </div>
+    ${A.priority.notes.map(n=>`<div style="font-size:11px;color:var(--gray-600);margin-bottom:3px;">→ ${n}</div>`).join('')}`;
+
+  goTo(4);
+}
+
+// ── STEP 4 → STEP 5 ──────────────────────────────────────────
+function confirmCase() {
+  document.getElementById('notif-case-num').textContent = caseNum;
+  buildMessages();
+  goTo(5);
+}
+
+// ── STEP 4: MESSAGES ─────────────────────────────────────────
+function buildMessages() {
+  const deadlineStr = new Date(D.deadline).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const queueName = A.routeTo === 'A' ? "Cody's team — Operations" : "Megan's team — Deal Desk";
+
+  // PRIMARY SLACK — to routing team
+  const slack1 = A.routeTo === 'A'
+    ? `@cody.perry | New Pricing Request — ${D.customer}
+Case: ${caseNum}  |  ${D.channelTxt}  |  Priority: ${A.priority.label}
+────────────────────────────────────────
+📦 Type A — Operations Workup
+👤 Customer: ${D.customer}
+📅 Deadline: ${deadlineStr}  (${A.daysOut} days)
+💰 Opp Value: $${parseFloat(D.oppval).toLocaleString()}
+💸 Discount Requested: ${D.disc}% ${parseFloat(D.disc) < T.autoDisc ? '✅ Auto-approved' : '⚠️ Escalation required'}
+📦 Products: ${D.products}
+🔢 Qty: ${parseInt(D.qty).toLocaleString()} units  |  Budget: $${parseFloat(D.budget).toLocaleString()}
+
+Context: ${D.event}
+${D.notes ? 'Notes: ' + D.notes : ''}
+
+→ Case ${caseNum} is open in your queue. Tasks and deadline set in SF.`
+    : `@megan | New Deal Desk Pricing Request — ${D.customer}
+Case: ${caseNum}  |  ${D.channelTxt}  |  Priority: ${A.priority.label}
+────────────────────────────────────────
+📁 Type B — ${A.isRFP ? 'FORMAL BID' : 'Custom / Complex Pricing'}
+👤 Customer: ${D.customer}
+📅 Deadline: ${deadlineStr}  (${A.daysOut} days)
+💰 Opp Value: $${parseFloat(D.oppval).toLocaleString()}  |  LTV: ${D.ltv && D.ltv !== '0' ? '$'+parseFloat(D.ltv).toLocaleString() : 'Unknown'}
+💸 Discount Requested: ${D.disc}% ${parseFloat(D.disc) < T.autoDisc ? '✅ Within threshold' : '⚠️ Deal Desk review required'}
+📦 Products: ${D.products}
+🔢 Qty: ${parseInt(D.qty).toLocaleString()} units  |  Budget: $${parseFloat(D.budget).toLocaleString()}
+
+Context: ${D.event}
+${D.notes ? 'Notes: ' + D.notes : ''}
+
+→ Case ${caseNum} is open in your queue. ${A.isRFP ? 'Full bid review pathway — Legal may be required.' : ''}`;
+
+  const msgs = [
+    { icon:'💬', tag:'tag-slack', tagTxt:'SLACK', title: `To ${queueName}`, msg: slack1 }
+  ];
+
+  // MANAGER APPROVAL (IB + high discount)
+  if (A.approvalLevel === 'manager') {
+    msgs.push({ icon:'✍️', tag:'tag-email', tagTxt:'EMAIL', title:'Manager Approval Request', msg:
+`TO: [IB Sales Manager]
+CC: customercontracts@customink.com
+SUBJECT: Approval Needed — ${D.disc}% Discount | ${D.customer} | Case ${caseNum}
+
+Hi [Manager],
+
+I need your sign-off before we proceed with the pricing workup below. Inbound Sales discounts ≥ ${T.autoDisc}% require manager approval.
+
+Customer: ${D.customer}
+Opportunity Value: $${parseFloat(D.oppval).toLocaleString()}
+Discount Requested: ${D.disc}% off catalog price
+Products: ${D.products.substring(0,100)}...
+Customer Budget: $${parseFloat(D.budget).toLocaleString()}
+Deadline: ${deadlineStr}
+
+Context: ${D.event}
+
+Please reply to this email to approve or decline. If approved, I will immediately route to ${queueName} for the workup.
+
+Thank you,
+${D.rep}` });
+  }
+
+  // FINANCE NOTIFICATION
+  if (A.financeReq) {
+    msgs.push({ icon:'💰', tag:'tag-slack', tagTxt:'SLACK', title:'Finance Team — Urgent Notification', msg:
+`@finance | Pricing Request Requires Finance Awareness
+Case: ${caseNum}  |  ${D.customer}  |  ${D.channelTxt}
+────────────────────────────────────────
+💰 Opp Value: $${parseFloat(D.oppval).toLocaleString()} (≥ $${T.finance.toLocaleString()} Finance threshold)
+💸 Discount: ${D.disc}%
+👤 Customer: ${D.customer}
+📅 Deadline: ${deadlineStr}
+
+Routed to ${queueName} for workup. Please advise if any Finance-specific requirements or approvals are needed before we commit to pricing.
+
+→ View Case ${caseNum} in Salesforce.` });
+
+    msgs.push({ icon:'💰', tag:'tag-email', tagTxt:'EMAIL', title:'Finance Team — Email Notification', msg:
+`TO: Finance Team
+CC: customercontracts@customink.com
+SUBJECT: Finance Review — ${D.customer} | $${parseFloat(D.oppval).toLocaleString()} | Case ${caseNum}
+
+Hi Finance team,
+
+A pricing request for ${D.customer} has been flagged for Finance involvement based on opportunity value.
+
+Case: ${caseNum}
+Customer: ${D.customer}
+Opportunity Value: $${parseFloat(D.oppval).toLocaleString()}
+Discount Requested: ${D.disc}%
+Channel: ${D.channelTxt}
+Customer Deadline: ${deadlineStr}
+Products: ${D.products.substring(0,120)}...
+
+This has been routed to ${queueName} for the pricing workup. Please let us know if any Finance approvals or special terms are required before we commit.
+
+Thank you,
+${D.rep} / Pricing Assistant Team` });
+  }
+
+  // CHATTER UPDATE TO REP
+  msgs.push({ icon:'📋', tag:'tag-sf', tagTxt:'SF CHATTER', title:`Chatter Update — Notify ${D.rep}`, msg:
+`@${D.rep.split(' ')[0].toLowerCase()} — Your pricing request for ${D.customer} has been received and routed.
+
+Case: ${caseNum}
+Routing: ${A.routeLabel}
+Approval Status: ${A.approvalLabel}
+Priority: ${A.priority.label}
+Deadline in SF: ${deadlineStr}
+
+${A.approvalLevel === 'manager' ? `⚠️ NEXT STEP: Your manager needs to approve the ${D.disc}% discount before the workup can begin. Check your email.` : `✅ The workup is underway. You'll receive an update from ${queueName} with pricing by [date TBD].`}
+
+${A.financeReq ? '💰 Finance has been notified and may have additional requirements.' : ''}
+
+Questions? Chattertag @contractteam or reply here.` });
+
+  document.getElementById('out-messages').innerHTML = `
+    <div style="padding:12px 16px;background:var(--green);border-radius:7px;margin-bottom:18px;font-size:12px;color:var(--green-dark);">
+      <strong>✅ ${msgs.length} message${msgs.length!==1?'s':''} generated.</strong> Review each one below, edit if needed, then send. All content is pulled from the intake form and analysis.
+    </div>
+    ${msgs.map((m,i) => `
+      <div class="msg-section">
+        <h3>${m.icon} <span class="platform-tag ${m.tag}">${m.tagTxt}</span> &nbsp;${m.title}</h3>
+        <div style="position:relative;">
+          <div class="msg-box" id="msg-${i}">${m.msg}</div>
+          <button class="copy-btn" id="copy-${i}" onclick="copyMsg(${i})">Copy</button>
+        </div>
+      </div>`).join('')}`;
+}
+
+function copyMsg(i) {
+  const el = document.getElementById(`msg-${i}`);
+  const btn = document.getElementById(`copy-${i}`);
+  navigator.clipboard.writeText(el.innerText).then(() => {
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function markComplete() {
+  if (confirm(`Mark case ${caseNum} as complete and start a new request?`)) startOver();
+}
+</script>
+</body>
+</html>
